@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Geoff Olegario</title>
+<meta name="description" content="Geoff Olegario — Product Designer. Case studies from Teamshares, Petal, and Justworks, readable from a designer, PM, or engineer's point of view.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;1,300&family=DM+Sans:opsz,wght@9..40,500&display=swap">
+<style>
+/* ---------- Faces ---------- */
+@font-face { font-family: "Maragsa Narrow"; src: url("fonts/maragsa-narrow.woff2") format("woff2"), url("fonts/maragsa-narrow.woff") format("woff"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Maragsa Narrow"; src: url("fonts/maragsa-boldnarrow.woff2") format("woff2"), url("fonts/maragsa-boldnarrow.woff") format("woff"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Maragsa Narrow"; src: url("fonts/maragsa-blacknarrow.woff2") format("woff2"), url("fonts/maragsa-blacknarrow.woff") format("woff"); font-weight: 900; font-display: swap; }
+@font-face { font-family: "Maragsa"; src: url("fonts/maragsa-medium.woff2") format("woff2"), url("fonts/maragsa-medium.woff") format("woff"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Maragsa Wide"; src: url("fonts/maragsa-wide.woff2") format("woff2"), url("fonts/maragsa-wide.woff") format("woff"); font-weight: 500; font-display: swap; }
+
+/* ---------- Tokens ---------- */
+:root {
+  --ground: #FBFBF9;
+  --surface: #FFFFFF;
+  --ink: #191E1A;
+  --muted: #484D48;
+  --rule: #E1E5DE;
+  --accent: #618758;
+  --accent-ink: #4C6E44;
+  --on-accent: #F9F9F6;
+  --lens-design: #618758;
+  --lens-product: #191E1A;
+  --lens-eng: #9AA995;
+  --lens: var(--lens-design);
+  --tk: #4C6E44;
+
+  --f-display: "Maragsa Narrow", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --f-body: "DM Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --f-wide: "Maragsa Wide", "Iowan Old Style", Georgia, serif;
+  --f-mono: var(--f-body);
+  --f-case: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+
+  --step--1: 0.8125rem;
+  --step-0: 1rem;
+  --step-1: 1.375rem;
+  --step-2: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
+  --step-3: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem);
+  --step-4: clamp(3.5rem, 1.8rem + 8vw, 9.5rem);
+
+  --gutter: clamp(16px, 4vw, 56px);
+  --max: 1320px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #131814;
+    --surface: #191E1A;
+    --ink: #F4F4F0;
+    --muted: #9AA995;
+    --rule: #2D342E;
+    --accent: #7FA574;
+    --accent-ink: #9DC091;
+    --on-accent: #131814;
+    --lens-design: #7FA574;
+    --lens-product: #F4F4F0;
+    --lens-eng: #9AA995;
+    --tk: #9DC091;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #131814;
+  --surface: #191E1A;
+  --ink: #F4F4F0;
+  --muted: #9AA995;
+  --rule: #2D342E;
+  --accent: #7FA574;
+  --accent-ink: #9DC091;
+  --on-accent: #131814;
+  --lens-design: #7FA574;
+  --lens-product: #F4F4F0;
+  --lens-eng: #9AA995;
+  --tk: #9DC091;
+}
+
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: var(--step-0);
+  font-weight: 300;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+body[data-lens="design"]  { --lens: var(--lens-design); }
+body[data-lens="product"] { --lens: var(--lens-product); }
+body[data-lens="eng"]     { --lens: var(--lens-eng); }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+.wrap { max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
+h1, h2, h3, h4 { margin: 0; font-weight: 900; font-family: var(--f-display); line-height: 0.95; text-wrap: balance; }
+p { margin: 0; }
+.label {
+  font-family: var(--f-wide);
+  font-size: var(--step--1);
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+/* ---------- Top bar + lens ---------- */
+.bar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  background: color-mix(in oklab, var(--ground) 88%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--rule);
+}
+.bar .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 60px;
+  flex-wrap: wrap;
+  padding-block: 8px;
+}
+.mark { font-family: var(--f-display); font-weight: 900; font-size: 1.5rem; text-decoration: none; letter-spacing: -0.01em; }
+.nav { display: flex; gap: 20px; align-items: center; }
+.nav a { font-family: var(--f-wide); font-size: var(--step--1); text-decoration: none; color: var(--muted); }
+.nav a:hover { color: var(--ink); }
+
+.bar-tools { display: flex; align-items: center; gap: 12px; }
+.lens-switch { display: flex; align-items: center; gap: 10px; }
+.theme-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 36px; height: 36px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  transition: color .2s, border-color .2s;
+}
+.theme-btn:hover { color: var(--ink); border-color: var(--muted); }
+.theme-btn svg { width: 17px; height: 17px; }
+.theme-btn .moon { display: none; }
+:root[data-theme="dark"] .theme-btn .moon, :root[data-theme="light"] .theme-btn .sun { display: block; }
+:root[data-theme="dark"] .theme-btn .sun, :root[data-theme="light"] .theme-btn .moon { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-btn .moon { display: block; }
+  :root:not([data-theme="light"]) .theme-btn .sun { display: none; }
+}
+.lens-switch .label { white-space: nowrap; }
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 3px;
+  background: var(--surface);
+}
+.seg button {
+  font: inherit;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  line-height: 1;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  padding: 7px 14px 6px;
+  cursor: pointer;
+  transition: color .2s, background-color .2s;
+}
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--ground); }
+.seg button[aria-pressed="true"]::before { content: ""; display: inline-block; width: 0.45em; height: 0.45em; border-radius: 50%; background: var(--lens); margin-right: 0.4em; vertical-align: 0.1em; box-shadow: 0 0 0 1.5px var(--ground); }
+
+/* ---------- Hero ---------- */
+.hero { padding-block: clamp(48px, 9vw, 120px) clamp(40px, 6vw, 80px); }
+.hero h1 {
+  font-family: var(--f-wide);
+  font-weight: 500;
+  font-size: clamp(2.25rem, 5.2vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  display: grid;
+}
+.hero h1 span { display: block; animation: rise .9s cubic-bezier(.2,.7,.2,1) both; }
+.hero h1 span:nth-child(2) { animation-delay: .08s; }
+.hero h1 .loop {
+  animation-delay: .16s;
+  font-family: var(--f-wide);
+  font-weight: 500;
+  font-size: 0.5em;
+  line-height: 1.2;
+  margin-top: 0.5em;
+  letter-spacing: 0;
+  color: var(--accent-ink);
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+}
+.loop svg { width: 0.9em; height: 0.9em; flex: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .loop svg { animation: spin 9s linear infinite; }
+}
+@keyframes rise { from { transform: translateY(0.18em); } to { transform: none; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .hero h1 span { animation: none; } }
+
+.intro {
+  margin-top: clamp(40px, 6vw, 72px);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(24px, 4vw, 64px);
+  border-top: 1px solid var(--ink);
+  padding-top: 24px;
+}
+.intro h2 { font-family: var(--f-wide); font-weight: 500; font-size: var(--step--1); letter-spacing: 0.04em; color: var(--muted); margin-bottom: 12px; line-height: 1.3; }
+.intro p { max-width: 62ch; }
+.intro p + p { margin-top: 1em; }
+.intro .co { text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
+.intro .co:hover { text-decoration-color: var(--accent); }
+
+/* ---------- Work index ---------- */
+.index { padding-block: clamp(40px, 6vw, 72px); }
+.index-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.index-head h2, .foot h2 { font-family: var(--f-wide); font-weight: 500; font-size: clamp(1.875rem, 1.1rem + 2.6vw, 3.5rem); line-height: 1.05; letter-spacing: -0.02em; }
+.draft-note {
+  font-family: var(--f-mono);
+  font-size: 0.75rem;
+  color: var(--tk);
+  border: 1px dashed currentColor;
+  border-radius: 4px;
+  padding: 6px 10px;
+  max-width: 44ch;
+  line-height: 1.4;
+}
+.works { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+.works li { border-bottom: 1px solid var(--rule); }
+.works a, .works .row {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr) minmax(0, 2fr);
+  gap: 16px;
+  align-items: baseline;
+  padding-block: 18px;
+  text-decoration: none;
+}
+.works .t { font-family: var(--f-wide); font-weight: 500; font-size: clamp(1.25rem, 0.95rem + 1.1vw, 1.875rem); line-height: 1.1; letter-spacing: -0.01em; transition: transform .25s cubic-bezier(.2,.7,.2,1), color .2s; }
+.works .d { color: var(--muted); font-size: 0.9375rem; }
+.works .c { font-family: var(--f-wide); font-size: var(--step--1); color: var(--muted); text-align: right; }
+.works a:hover .t { color: var(--accent-ink); transform: translateX(8px); }
+.works .row { color: var(--muted); }
+.works .row .t { color: var(--muted); }
+.pill { font-family: var(--f-mono); font-size: 0.6875rem; letter-spacing: 0.02em; border: 1px solid var(--rule); border-radius: 999px; padding: 2px 8px; vertical-align: middle; white-space: nowrap; }
+
+/* ---------- Case study ---------- */
+/* Case studies are set in DM Sans 500; Maragsa carries the hero, work index and footer. */
+.case .case-rail .company,
+.case .meta dt,
+.case .label,
+.case .problem blockquote,
+.case .problem li strong,
+.case .tab,
+.case .tab small,
+.case .moves h4,
+.case .fig .v,
+.case .results .learn strong {
+  font-family: var(--f-case);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.case .problem blockquote { line-height: 1.15; letter-spacing: -0.015em; max-width: 30ch; }
+.case .problem li strong { line-height: 1.25; font-size: 1.125rem; }
+.case .moves h4 { line-height: 1.3; font-size: 1.0625rem; }
+.case .tab { font-size: 1.0625rem; }
+.case .fig .v { letter-spacing: -0.02em; font-size: clamp(2rem, 1.2rem + 2.4vw, 3rem); }
+.case .label, .case .tab small, .case .meta dt, .case .case-rail .company, .case .results .learn strong { letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.6875rem; }
+.case { padding-block: clamp(56px, 8vw, 112px); border-top: 1px solid var(--ink); scroll-margin-top: 72px; }
+.case-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: clamp(24px, 5vw, 80px);
+}
+.case-rail { align-self: start; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 92px); }
+.case-rail .company { font-family: var(--f-wide); font-size: var(--step--1); color: var(--accent-ink); letter-spacing: 0.04em; }
+.case-rail h2 { font-family: var(--f-wide); font-weight: 500; font-size: clamp(1.75rem, 1rem + 2vw, 2.75rem); line-height: 1.05; letter-spacing: -0.02em; margin-top: 12px; overflow-wrap: break-word; }
+.case-rail .tag { margin-top: 16px; font-size: 1.0625rem; line-height: 1.5; max-width: 30ch; }
+.meta { margin: 28px 0 0; display: grid; gap: 0; border-top: 1px solid var(--rule); }
+.meta div { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 12px; padding-block: 9px; border-bottom: 1px solid var(--rule); }
+.meta dt { font-family: var(--f-wide); font-size: var(--step--1); color: var(--muted); padding-top: 3px; }
+.meta dd { margin: 0; font-size: 0.875rem; }
+
+.case-body { display: grid; gap: clamp(48px, 6vw, 80px); min-width: 0; }
+.block > .label { display: block; margin-bottom: 14px; }
+.overview p { font-size: 1.1875rem; line-height: 1.5; max-width: 46ch; }
+.overview p + p { margin-top: 1em; font-size: var(--step-0); line-height: 1.65; max-width: 64ch; color: var(--muted); }
+
+.problem blockquote {
+  margin: 0;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: var(--step-2);
+  line-height: 1.02;
+  text-wrap: balance;
+  max-width: 24ch;
+}
+.problem ul { list-style: none; padding: 0; margin: 24px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.problem li { border-top: 1px solid var(--rule); padding-top: 12px; font-size: 0.875rem; line-height: 1.6; }
+.problem li strong { display: block; font-family: var(--f-display); font-weight: 700; font-size: var(--step-1); line-height: 1.05; margin-bottom: 6px; }
+
+/* Perspective tabs */
+.persp { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.persp-head { display: flex; justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap; padding: 20px clamp(16px, 3vw, 32px) 0; }
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--rule); padding-inline: clamp(8px, 2vw, 24px); margin-top: 14px; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  font: inherit;
+  font-family: var(--f-display);
+  font-weight: 900;
+  font-size: var(--step-1);
+  line-height: 1;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  padding: 12px 10px 12px;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--lens); }
+.tab small { font-family: var(--f-wide); font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.04em; color: var(--muted); margin-left: 4px; }
+.panel { padding: clamp(20px, 3vw, 36px) clamp(16px, 3vw, 32px) clamp(24px, 3vw, 40px); }
+@media (prefers-reduced-motion: no-preference) {
+  .panel:not([hidden]) { animation: panel-in .35s cubic-bezier(.2,.7,.2,1); }
+}
+@keyframes panel-in { from { transform: translateY(6px); } to { transform: none; } }
+.panel .lead { font-size: 1.1875rem; line-height: 1.5; max-width: 48ch; }
+.panel .lead::before {
+  content: "";
+  display: inline-block;
+  width: 0.55em; height: 0.55em;
+  border-radius: 50%;
+  background: var(--lens);
+  margin-right: 0.45em;
+  vertical-align: 0.08em;
+}
+.moves { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 0; counter-reset: move; }
+.moves li {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  gap: 20px;
+  padding-block: 16px;
+  border-top: 1px solid var(--rule);
+}
+.moves h4 { font-weight: 700; font-size: var(--step-1); line-height: 1.05; }
+.moves p { font-size: 0.9375rem; line-height: 1.65; color: var(--ink); max-width: 60ch; }
+.tools { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.tools .label { margin-right: 4px; }
+.tools span.pill { color: var(--ink); background: var(--ground); }
+
+/* Results */
+.figs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--ink); }
+.fig { padding: 18px 16px 18px 0; border-right: 1px solid var(--rule); }
+.fig + .fig { padding-left: 16px; }
+.fig:last-child { border-right: 0; }
+.fig .v { font-family: var(--f-display); font-weight: 900; font-size: var(--step-3); line-height: 0.9; font-variant-numeric: tabular-nums; }
+.fig .v.tk { font-family: var(--f-mono); font-weight: 300; font-size: var(--step-2); color: var(--tk); letter-spacing: 0.02em; }
+.fig .k { margin-top: 8px; font-size: 0.8125rem; line-height: 1.5; color: var(--muted); max-width: 26ch; }
+.results .outcome { margin-top: 24px; max-width: 64ch; }
+.results .learn { margin-top: 20px; padding-left: 16px; border-left: 2px solid var(--accent); max-width: 62ch; color: var(--muted); }
+.results .learn strong { color: var(--ink); font-weight: 500; font-family: var(--f-wide); font-size: var(--step--1); letter-spacing: 0.04em; display: block; margin-bottom: 4px; }
+
+/* ---------- Footer ---------- */
+.foot { border-top: 1px solid var(--ink); padding-block: clamp(48px, 7vw, 96px) 40px; }
+.foot .wrap { display: grid; gap: 28px; }
+.foot .links { display: flex; gap: 24px; flex-wrap: wrap; font-family: var(--f-wide); font-size: var(--step--1); }
+.foot .links a { color: var(--accent-ink); }
+.foot small { color: var(--muted); font-size: 0.875rem; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 960px) {
+  .case-grid { grid-template-columns: minmax(0, 1fr); }
+  .case-rail { position: static; }
+  .case-rail .tag { max-width: 40ch; }
+  .problem ul { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .problem li { padding-block: 12px; }
+}
+@media (max-width: 720px) {
+  .nav { display: none; }
+  .bar .wrap { justify-content: space-between; }
+  .intro { grid-template-columns: minmax(0, 1fr); }
+  .works a, .works .row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .works .c { text-align: left; }
+  .moves li { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .figs { grid-template-columns: minmax(0, 1fr); }
+  .fig, .fig + .fig { padding: 14px 0; border-right: 0; border-bottom: 1px solid var(--rule); }
+  .lens-switch .label { display: none; }
+  .seg button { padding: 7px 11px 6px; }
+}
+</style>
+</head>
+<body data-lens="design">
+
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="#top">Geoff Olegario</a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#work">Work</a>
+      <a href="#about">About</a>
+      <a href="https://www.linkedin.com/in/geoffrey-olegario-20814936/" rel="noopener" target="_blank">LinkedIn</a>
+    </nav>
+    <div class="bar-tools">
+    <div class="lens-switch">
+      <span class="label" id="lens-label">Read as</span>
+      <div class="seg" role="group" aria-labelledby="lens-label" id="lens-seg">
+        <button type="button" data-lens="design" aria-pressed="true">Designer</button>
+        <button type="button" data-lens="product" aria-pressed="false">PM</button>
+        <button type="button" data-lens="eng" aria-pressed="false">Engineer</button>
+      </div>
+      </div>
+      <button class="theme-btn" type="button" id="theme-btn" aria-label="Switch to dark theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.4M12 19.2v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.4 12h2.4M19.2 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.2 8.2 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero wrap" aria-label="Introduction">
+    <h1>
+      <span>Understand the problem.</span>
+      <span>Provide solutions.</span>
+      <span class="loop">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v4.5h-4.5"/></svg>
+        Rinse and repeat.
+      </span>
+    </h1>
+
+    <div class="intro" id="about">
+      <div>
+        <h2>What I think about design</h2>
+        <!-- <p>Design begins with the understanding that a person is trying to get something done. It develops by diving into conversations, interactions, and everything a person does to get that thing done. And then asking ourselves, is there value in making that more efficient, more intuitive, and more delightful by noticing and changing behaviors people didn’t even know they were used to.</p> -->
+        <p>We're all trying to get stuff done, progress, experience. The way things are designed either help us or hinder us in that journey. And (un)fortunately, we get to trial and error what works best for experiencer. Everything we do is designed by nature, crafted by humans, and experienced by everyone.</p>
+      </div>
+      <div>
+        <h2>Work style</h2>
+        <p>As a Product Designer and having worked mostly in the startup setting, I’m used to doing everything from research planning, to conducting moderated and unmoderated testing, to putting the final touches and documentation to designs. Discover, define, and execute.</p>
+        <p>I’ve worked on many products, including financial tooling and reporting at <a class="co" href="https://www.teamshares.com/" rel="noopener" target="_blank">Teamshares</a>, health benefits and internal tools with <a class="co" href="https://justworks.com" rel="noopener" target="_blank">Justworks</a>, consumer lending with <a class="co" href="https://www.petalcard.com" rel="noopener" target="_blank">Petal</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="index wrap" id="work" aria-labelledby="work-h">
+    <div class="index-head">
+      <h2 id="work-h">Selected work</h2>
+      <p class="draft-note" id="draft-note">Draft copy: case study details below are placeholders to replace. Figures marked TK are still to come.</p>
+    </div>
+    <ul class="works" id="works"></ul>
+  </section>
+
+  <div id="cases"></div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <h2>Let’s talk about the problem you’re solving.</h2>
+    <div class="links">
+      <a href="https://www.linkedin.com/in/geoffrey-olegario-20814936/" rel="noopener" target="_blank">LinkedIn</a>
+      <a href="#top">Back to top</a>
+    </div>
+    <small>© <span id="yr">2026</span> Geoff Olegario. All rights reserved.</small>
+  </div>
+</footer>
+
+<script>
+/* =====================================================================
+   CONTENT
+   Edit case studies here. Every case has the same shape:
+   overview → problem → perspectives (design / product / eng) → results.
+   Set a result value to "TK" to show a "to come" placeholder.
+   Set SHOW_DRAFT_NOTE to false once the copy is final.
+   ===================================================================== */
+const SHOW_DRAFT_NOTE = true;
+
+const LENSES = [
+  { id: "design",  tab: "For designers", short: "Designer" },
+  { id: "product", tab: "For PMs",       short: "PM" },
+  { id: "eng",     tab: "For engineers", short: "Engineer" }
+];
+
+const UPCOMING = [
+  { title: "Network company banking", desc: "Building a proprietary banking system for scale.", company: "Teamshares" }
+];
+
+const CASES = [
+  {
+    id: "leap",
+    company: "Petal",
+    title: "Leap",
+    tagline: "Teaching responsible credit usage through rewards.",
+    meta: { Role: "Lead product designer", Team: "PM, 4 engineers, data science, compliance", Platforms: "iOS, Android, web" },
+    overview: [
+      "Leap turned a first credit card into a guided path: pay on time, hit milestones, and get rewarded for building good habits.",
+      "Many Petal members were getting their first card with little or no credit history. Leap made progress visible and rewarded consistent behavior, so responsible use felt like something you work toward rather than a rule you might break."
+    ],
+    problem: {
+      statement: "New-to-credit members had a card, but no sense of what “good” looked like until something went wrong.",
+      points: [
+        ["Invisible progress", "Credit building happens over months. Members couldn’t see the payoff of paying on time."],
+        ["Penalty-first feedback", "The first strong signal most members got was a late fee or a declined limit increase."],
+        ["Shared risk", "Missed payments hurt members’ scores and Petal’s portfolio at the same time."]
+      ]
+    },
+    perspectives: {
+      design: {
+        lead: "Framed credit health as progress toward a reward, not a list of penalties to avoid.",
+        moves: [
+          ["Milestone tracker", "Designed a home-screen tracker showing on-time payments toward the next reward, so members always knew their next step."],
+          ["Message testing", "Ran unmoderated tests on reminder and celebration copy to find a tone that motivated without sounding paternalistic."],
+          ["Recovery states", "Designed what happens after a missed payment, so members could get back on track instead of dropping out."]
+        ],
+        tools: ["Journey map", "Unmoderated tests", "Prototype", "Content guidelines"]
+      },
+      product: {
+        lead: "Tied milestones to behavior the risk model already trusted, so rewards stayed affordable.",
+        moves: [
+          ["Milestone definition", "Worked with data science and credit risk to choose milestones that predict responsible use."],
+          ["Scoped MVP", "Launched with one reward type and a fixed milestone ladder to learn quickly before adding more."],
+          ["Success metrics", "Main metric: on-time payment rate. Guardrails: reward cost per member and support contact rate."]
+        ],
+        tools: ["PRD", "Metric tree", "Risk review", "Launch plan"]
+      },
+      eng: {
+        lead: "Designed around the payment ledger as the source of truth, with the edge cases spelled out before build.",
+        moves: [
+          ["Milestone state", "Progress is derived from posted payments instead of stored separately, so the tracker never disagrees with the statement."],
+          ["Edge cases up front", "Partial payments, failed autopay, and payments made the day of the due date each got a defined state and design."],
+          ["Event-driven nudges", "Reminders and celebrations fire from payment events, keeping notification logic out of the app client."]
+        ],
+        tools: ["State diagram", "Edge-case matrix", "Event spec"]
+      }
+    },
+    results: {
+      figures: [["TK", "change in on-time payment rate"], ["TK", "members enrolled in the first quarter"], ["TK", "change in support contacts about payments"]],
+      outcome: "Leap gave members a reason to come back to the app between statements, and gave Petal a reward that encouraged the behavior it already wanted.",
+      learning: "Positive feedback loops moved behavior faster than warnings did."
+    }
+  },
+  {
+    id: "petal-cash-back-boosts",
+    company: "Petal",
+    title: "Cash back boosts",
+    tagline: "An experiment in increasing card activity.",
+    meta: { Role: "Product designer", Team: "PM, 3 engineers, data analyst, marketing", Platforms: "iOS, Android" },
+    overview: [
+      "Boosts were limited-time increases in cash back at specific merchants or categories, built as an experiment to see if well-timed rewards could make Petal the card members reach for first.",
+      "We treated it as a test from day one: small cohorts, clear hypotheses, and a design flexible enough to change offers without shipping a new app version."
+    ],
+    problem: {
+      statement: "Members got approved, made a few purchases, and then the card slipped to the back of the wallet.",
+      points: [
+        ["Low top-of-wallet share", "A card that isn’t used doesn’t earn interchange revenue or build the member’s credit."],
+        ["Flat rewards", "A fixed cash back rate gave members no reason to think of Petal at any particular moment."],
+        ["Unknown cost", "No one knew how much extra spending a boost would drive relative to what the reward cost."]
+      ]
+    },
+    perspectives: {
+      design: {
+        lead: "Made boosts feel timely and easy to act on, one tap to activate right where members already looked.",
+        moves: [
+          ["Activation, not opt-out", "Designed a tap-to-activate pattern so members consciously claimed a boost, which also gave us a clean intent signal."],
+          ["Placement tests", "Prototyped boosts in the home feed, push notifications, and the rewards tab, and tested which drove activation."],
+          ["Clear terms", "Showed expiry, merchant, and cap on the offer itself so there was no fine print to dig for."]
+        ],
+        tools: ["Prototype variants", "Offer card component", "Copy tests"]
+      },
+      product: {
+        lead: "Ran it as an experiment with a holdout, so we measured extra spending the boosts actually caused.",
+        moves: [
+          ["Hypothesis", "Time-limited, merchant-specific boosts increase monthly active card use for members with low recent spend."],
+          ["Cohorts and holdout", "Randomized eligible members into offer variants and a no-boost control group."],
+          ["Unit economics", "Compared reward cost with extra interchange from new spending to decide whether to scale up."]
+        ],
+        tools: ["Experiment brief", "Cohort plan", "Readout deck"]
+      },
+      eng: {
+        lead: "Built boosts as configurable rules so new offers shipped without an app release.",
+        moves: [
+          ["Rules engine", "Offers match on merchant category codes (MCC) and merchant IDs, with start and end dates and per-member caps."],
+          ["Feature-flagged cohorts", "Eligibility and variants are assigned server-side, so the experiment could change mid-flight."],
+          ["Settlement timing", "Boost credit applies when a transaction posts, not when it’s authorized, so refunds and reversals don’t pay out rewards."]
+        ],
+        tools: ["Offer schema", "MCC mapping", "Flag config"]
+      }
+    },
+    results: {
+      figures: [["TK", "change in monthly active card use vs. holdout"], ["TK", "boost activation rate"], ["TK", "extra spend per reward dollar"]],
+      outcome: "The experiment showed which offer shapes paid for themselves, and gave the team a reusable offers system for future campaigns.",
+      learning: "Asking members to activate a boost told us as much about their intent as the purchases did."
+    }
+  },
+  {
+    id: "design-operations",
+    company: "Petal",
+    title: "Design operations",
+    tagline: "Maturing design and aligning as a team.",
+    meta: { Role: "Product designer, design ops lead", Team: "Design team, with product and engineering leads", Scope: "Process, tooling, design system" },
+    overview: [
+      "As the company grew, design grew from a few people solving problems in parallel into a team that needed shared ways of working.",
+      "This work set up the rituals, tooling, and system that let design scale without slowing product teams down."
+    ],
+    problem: {
+      statement: "Every designer had their own process, and product and engineering felt it in every handoff.",
+      points: [
+        ["Inconsistent UI", "The same components were rebuilt slightly differently across teams."],
+        ["Unpredictable timelines", "PMs couldn’t tell when design would be ready, or what “ready” meant."],
+        ["Handoff churn", "Engineers found missing states in QA, which meant late design rework."]
+      ]
+    },
+    perspectives: {
+      design: {
+        lead: "Gave the team a shared foundation, so critique could focus on the problem instead of on pixels.",
+        moves: [
+          ["Component library", "Audited existing screens, merged duplicates, and published a Figma library with documented usage."],
+          ["Critique rituals", "Set up a weekly critique with a clear format: context, what feedback you need, and decisions made."],
+          ["Definition of done", "Wrote a checklist covering states, edge cases, accessibility, and copy review before handoff."]
+        ],
+        tools: ["UI audit", "Figma library", "Critique format", "Handoff checklist"]
+      },
+      product: {
+        lead: "Made design work visible and predictable inside the product development cycle.",
+        moves: [
+          ["Design intake", "Created a lightweight brief so requests arrived with a problem statement, constraints, and success criteria."],
+          ["Stage gates", "Agreed on explore → define → deliver reviews, so PMs knew when to weigh in and when direction was locked."],
+          ["Capacity view", "Kept a shared board of design work across squads to spot bottlenecks early."]
+        ],
+        tools: ["Intake brief", "Review stages", "Planning board"]
+      },
+      eng: {
+        lead: "Made design and code describe the same components, so handoff became a lookup instead of a translation.",
+        moves: [
+          ["Shared tokens", "Defined color, type, and spacing tokens with names that match the code, from Figma through to the codebase."],
+          ["Spec'd states", "Handoffs include empty, loading, error, and disabled states by default."],
+          ["Shared QA", "Designers join QA before release, which catches visual regressions before customers see them."]
+        ],
+        tools: ["Design tokens", "Component specs", "QA checklist"]
+      }
+    },
+    results: {
+      figures: [["TK", "components merged into the library"], ["TK", "fewer design-related QA issues"], ["TK", "change in design cycle time"]],
+      outcome: "Design reviews got faster and more focused, and product and engineering could plan around design instead of waiting on it.",
+      learning: "Process sticks when it removes work for the other teams, not only for design."
+    }
+  },
+  {
+    id: "flexible-health-insurance",
+    company: "Justworks",
+    title: "Flexible health insurance",
+    tagline: "A lesson in listening to our customers and our operations teams.",
+    meta: { Role: "Product designer", Team: "PM, engineers, benefits operations, customer success", Users: "Admins and employees" },
+    overview: [
+      "Justworks customers wanted more choice in the health plans they offer, without taking on the complexity of running benefits themselves.",
+      "The answer came as much from the operations team that processes benefits every day as from the customers asking for flexibility."
+    ],
+    problem: {
+      statement: "Customers asked for flexibility. Operations was already feeling the manual workarounds it caused.",
+      points: [
+        ["Rigid plan setup", "Companies with different needs across teams or locations couldn’t offer the plans that fit."],
+        ["Manual workarounds", "Special requests went through operations and spreadsheets, which slowed enrollment and caused errors."],
+        ["Deadlines", "Open enrollment windows left little room for mistakes or back-and-forth."]
+      ]
+    },
+    perspectives: {
+      design: {
+        lead: "Listened to both sides: customers’ goals, and the operations work that makes those goals possible.",
+        moves: [
+          ["Two-sided research", "Interviewed company admins and shadowed benefits operations to map the flow from both ends."],
+          ["Admin setup flow", "Designed plan selection around the decisions admins actually make: budget, eligibility, and employee choice."],
+          ["Employee enrollment", "Made plan comparison clear at the moment of choice, with cost shown per paycheck."]
+        ],
+        tools: ["Service blueprint", "Interviews", "Ops shadowing", "Prototype"]
+      },
+      product: {
+        lead: "Scoped flexibility to what operations could support reliably at open enrollment.",
+        moves: [
+          ["Ops cost as a requirement", "Measured manual ops touches per request and set reducing them as a launch goal."],
+          ["Phased rollout", "Launched with a limited set of plan combinations ahead of open enrollment, then expanded."],
+          ["Support readiness", "Aligned customer success scripts and help content with the new flow before launch."]
+        ],
+        tools: ["Opportunity sizing", "Rollout plan", "Enablement docs"]
+      },
+      eng: {
+        lead: "Turned the operations team’s unwritten rules into eligibility logic the system could check.",
+        moves: [
+          ["Eligibility rules", "Encoded plan eligibility by location, class, and waiting period instead of relying on manual review."],
+          ["Carrier data", "Validated plan and rate data from carriers before it reached the enrollment flow."],
+          ["Life events", "Handled qualifying life events and mid-year changes as part of the same model instead of as special cases."]
+        ],
+        tools: ["Rules matrix", "Data validation", "Enrollment state model"]
+      }
+    },
+    results: {
+      figures: [["TK", "fewer manual ops touches per request"], ["TK", "customers offering flexible plans"], ["TK", "change in enrollment errors"]],
+      outcome: "Customers got the flexibility they asked for, and operations got fewer manual workarounds instead of more.",
+      learning: "The operations team knew the edge cases before anyone else did. Listen to them early."
+    }
+  }
+];
+
+/* =====================================================================
+   RENDER
+   ===================================================================== */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function renderIndex() {
+  const rows = CASES.map(c => `
+    <li><a href="#${c.id}">
+      <span class="t">${esc(c.title)}</span>
+      <span class="d">${esc(c.tagline)}</span>
+      <span class="c">${esc(c.company)}</span>
+    </a></li>`);
+  const up = UPCOMING.map(u => `
+    <li><div class="row">
+      <span class="t">${esc(u.title)}</span>
+      <span class="d">${esc(u.desc)}</span>
+      <span class="c">${esc(u.company)} <span class="pill">In progress</span></span>
+    </div></li>`);
+  document.getElementById("works").innerHTML = up.join("") + rows.join("");
+}
+
+function renderCase(c) {
+  const meta = Object.entries(c.meta).map(([k, v]) =>
+    `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("");
+
+  const tabs = LENSES.map(l => `
+    <button class="tab" role="tab" type="button" id="${c.id}-tab-${l.id}" data-lens="${l.id}"
+      aria-controls="${c.id}-panel-${l.id}" aria-selected="false" tabindex="-1">${esc(l.tab)}</button>`).join("");
+
+  const panels = LENSES.map(l => {
+    const p = c.perspectives[l.id];
+    return `
+    <div class="panel" role="tabpanel" id="${c.id}-panel-${l.id}" aria-labelledby="${c.id}-tab-${l.id}" data-lens="${l.id}" tabindex="0" hidden>
+      <p class="lead">${esc(p.lead)}</p>
+      <ul class="moves">
+        ${p.moves.map(([h, b]) => `<li><h4>${esc(h)}</h4><p>${esc(b)}</p></li>`).join("")}
+      </ul>
+      <div class="tools"><span class="label">Artifacts</span>${p.tools.map(t => `<span class="pill">${esc(t)}</span>`).join("")}</div>
+    </div>`;
+  }).join("");
+
+  const figs = c.results.figures.map(([v, k]) => `
+    <div class="fig"><div class="v${v === "TK" ? " tk" : ""}">${esc(v)}</div><div class="k">${esc(k)}</div></div>`).join("");
+
+  return `
+  <article class="case" id="${c.id}" aria-labelledby="${c.id}-h">
+    <div class="wrap case-grid">
+      <aside class="case-rail">
+        <div class="company">${esc(c.company)}</div>
+        <h2 id="${c.id}-h">${esc(c.title)}</h2>
+        <p class="tag">${esc(c.tagline)}</p>
+        <dl class="meta">${meta}</dl>
+      </aside>
+
+      <div class="case-body">
+        <section class="block overview">
+          <span class="label">Overview</span>
+          ${c.overview.map(p => `<p>${esc(p)}</p>`).join("")}
+        </section>
+
+        <section class="block problem">
+          <span class="label">The problem</span>
+          <blockquote>${esc(c.problem.statement)}</blockquote>
+          <ul>${c.problem.points.map(([h, b]) => `<li><strong>${esc(h)}</strong>${esc(b)}</li>`).join("")}</ul>
+        </section>
+
+        <section class="block">
+          <div class="persp">
+            <div class="persp-head">
+              <span class="label">Finding the solution</span>
+            </div>
+            <div class="tabs" role="tablist" aria-label="${esc(c.title)}: perspectives">${tabs}</div>
+            ${panels}
+          </div>
+        </section>
+
+        <section class="block results">
+          <span class="label">Results</span>
+          <div class="figs">${figs}</div>
+          <p class="outcome">${esc(c.results.outcome)}</p>
+          <p class="learn"><strong>What I learned</strong>${esc(c.results.learning)}</p>
+        </section>
+      </div>
+    </div>
+  </article>`;
+}
+
+/* =====================================================================
+   THEME: follows the system until the visitor picks one
+   ===================================================================== */
+const THEME_KEY = "geoff-portfolio-theme";
+const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+function currentTheme() {
+  return document.documentElement.dataset.theme || (systemDark.matches ? "dark" : "light");
+}
+
+function setTheme(theme, remember) {
+  if (theme) document.documentElement.dataset.theme = theme;
+  else delete document.documentElement.dataset.theme;
+  const next = currentTheme() === "dark" ? "light" : "dark";
+  document.getElementById("theme-btn").setAttribute("aria-label", `Switch to ${next} theme`);
+  if (remember) { try { localStorage.setItem(THEME_KEY, theme); } catch (e) {} }
+}
+
+/* =====================================================================
+   LENS: one choice applies to every case study
+   ===================================================================== */
+const LENS_KEY = "geoff-portfolio-lens";
+
+function setLens(lens, anchorEl) {
+  // Keep the clicked element in place while panels above it change height.
+  const before = anchorEl ? anchorEl.getBoundingClientRect().top : null;
+
+  document.body.dataset.lens = lens;
+  document.querySelectorAll("#lens-seg button").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.lens === lens)));
+  document.querySelectorAll(".tab").forEach(t => {
+    const on = t.dataset.lens === lens;
+    t.setAttribute("aria-selected", String(on));
+    t.tabIndex = on ? 0 : -1;
+  });
+  document.querySelectorAll(".panel").forEach(p => { p.hidden = p.dataset.lens !== lens; });
+
+  if (anchorEl && before !== null) {
+    const after = anchorEl.getBoundingClientRect().top;
+    if (Math.abs(after - before) > 1) window.scrollBy({ top: after - before, behavior: "instant" });
+  }
+  try { localStorage.setItem(LENS_KEY, lens); } catch (e) {}
+}
+
+function init() {
+  renderIndex();
+  document.getElementById("cases").innerHTML = CASES.map(renderCase).join("");
+  document.getElementById("draft-note").hidden = !SHOW_DRAFT_NOTE;
+  document.getElementById("yr").textContent = new Date().getFullYear();
+
+  let savedTheme = null;
+  try { savedTheme = localStorage.getItem(THEME_KEY); } catch (e) {}
+  setTheme(savedTheme === "dark" || savedTheme === "light" ? savedTheme : null, false);
+  document.getElementById("theme-btn").addEventListener("click", () =>
+    setTheme(currentTheme() === "dark" ? "light" : "dark", true));
+  systemDark.addEventListener("change", () => {
+    if (!document.documentElement.dataset.theme) setTheme(null, false);
+  });
+
+  let saved = "design";
+  try { saved = localStorage.getItem(LENS_KEY) || "design"; } catch (e) {}
+  if (!LENSES.some(l => l.id === saved)) saved = "design";
+  setLens(saved);
+
+  document.getElementById("lens-seg").addEventListener("click", e => {
+    const b = e.target.closest("button[data-lens]");
+    if (b) setLens(b.dataset.lens);
+  });
+
+  document.getElementById("cases").addEventListener("click", e => {
+    const t = e.target.closest(".tab");
+    if (t) setLens(t.dataset.lens, t);
+  });
+
+  // Arrow-key navigation within each tablist
+  document.getElementById("cases").addEventListener("keydown", e => {
+    const t = e.target.closest(".tab");
+    if (!t) return;
+    const list = [...t.parentElement.querySelectorAll(".tab")];
+    let i = list.indexOf(t);
+    if (e.key === "ArrowRight") i = (i + 1) % list.length;
+    else if (e.key === "ArrowLeft") i = (i - 1 + list.length) % list.length;
+    else if (e.key === "Home") i = 0;
+    else if (e.key === "End") i = list.length - 1;
+    else return;
+    e.preventDefault();
+    setLens(list[i].dataset.lens, list[i]);
+    list[i].focus();
+  });
+}
+init();
+</script>
+</body>
+</html>
