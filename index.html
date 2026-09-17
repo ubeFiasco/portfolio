@@ -94,9 +94,9 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
-body[data-lens="design"]  { --lens: var(--lens-design); }
-body[data-lens="product"] { --lens: var(--lens-product); }
-body[data-lens="eng"]     { --lens: var(--lens-eng); }
+.case[data-lens="design"]  { --lens: var(--lens-design); }
+.case[data-lens="product"] { --lens: var(--lens-product); }
+.case[data-lens="eng"]     { --lens: var(--lens-eng); }
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
 .wrap { max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
@@ -134,7 +134,6 @@ p { margin: 0; }
 .nav a:hover { color: var(--ink); }
 
 .bar-tools { display: flex; align-items: center; gap: 12px; }
-.lens-switch { display: flex; align-items: center; gap: 10px; }
 .theme-btn {
   display: inline-grid;
   place-items: center;
@@ -156,32 +155,6 @@ p { margin: 0; }
   :root:not([data-theme="light"]) .theme-btn .moon { display: block; }
   :root:not([data-theme="light"]) .theme-btn .sun { display: none; }
 }
-.lens-switch .label { white-space: nowrap; }
-.seg {
-  display: inline-flex;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  padding: 3px;
-  background: var(--surface);
-}
-.seg button {
-  font: inherit;
-  font-family: var(--f-display);
-  font-weight: 700;
-  font-size: 1.0625rem;
-  line-height: 1;
-  color: var(--muted);
-  background: transparent;
-  border: 0;
-  border-radius: 999px;
-  padding: 7px 14px 6px;
-  cursor: pointer;
-  transition: color .2s, background-color .2s;
-}
-.seg button:hover { color: var(--ink); }
-.seg button[aria-pressed="true"] { background: var(--ink); color: var(--ground); }
-.seg button[aria-pressed="true"]::before { content: ""; display: inline-block; width: 0.45em; height: 0.45em; border-radius: 50%; background: var(--lens); margin-right: 0.4em; vertical-align: 0.1em; box-shadow: 0 0 0 1.5px var(--ground); }
-
 /* ---------- Hero ---------- */
 .hero { padding-block: clamp(48px, 9vw, 120px) clamp(40px, 6vw, 80px); }
 .hero h1 {
@@ -404,8 +377,6 @@ p { margin: 0; }
   .moves li { grid-template-columns: minmax(0, 1fr); gap: 6px; }
   .figs { grid-template-columns: minmax(0, 1fr); }
   .fig, .fig + .fig { padding: 14px 0; border-right: 0; border-bottom: 1px solid var(--rule); }
-  .lens-switch .label { display: none; }
-  .seg button { padding: 7px 11px 6px; }
 }
 </style>
 <script>
@@ -416,7 +387,7 @@ p { margin: 0; }
   })();
 </script>
 </head>
-<body data-lens="design">
+<body>
 
 <header class="bar">
   <div class="wrap">
@@ -427,14 +398,6 @@ p { margin: 0; }
       <a href="https://www.linkedin.com/in/geoffrey-olegario-20814936/" rel="noopener" target="_blank">LinkedIn</a>
     </nav>
     <div class="bar-tools">
-    <div class="lens-switch">
-      <span class="label" id="lens-label">Read as</span>
-      <div class="seg" role="group" aria-labelledby="lens-label" id="lens-seg">
-        <button type="button" data-lens="design" aria-pressed="true">Designer</button>
-        <button type="button" data-lens="product" aria-pressed="false">PM</button>
-        <button type="button" data-lens="eng" aria-pressed="false">Engineer</button>
-      </div>
-      </div>
       <button class="theme-btn" type="button" id="theme-btn" aria-label="Switch to dark theme">
         <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.4M12 19.2v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.4 12h2.4M19.2 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
         <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.2 8.2 0 1 0 10.2 10.2z"/></svg>
@@ -829,29 +792,24 @@ function setTheme(theme, remember) {
 }
 
 /* =====================================================================
-   LENS: one choice applies to every case study
+   PERSPECTIVE TABS: each case study keeps its own selected tab
    ===================================================================== */
-const LENS_KEY = "geoff-portfolio-lens";
-
-function setLens(lens, anchorEl) {
-  // Keep the clicked element in place while panels above it change height.
+function setLens(caseEl, lens, anchorEl) {
+  // Keep the clicked tab in place while panels of different heights swap in.
   const before = anchorEl ? anchorEl.getBoundingClientRect().top : null;
 
-  document.body.dataset.lens = lens;
-  document.querySelectorAll("#lens-seg button").forEach(b =>
-    b.setAttribute("aria-pressed", String(b.dataset.lens === lens)));
-  document.querySelectorAll(".tab").forEach(t => {
+  caseEl.dataset.lens = lens;
+  caseEl.querySelectorAll(".tab").forEach(t => {
     const on = t.dataset.lens === lens;
     t.setAttribute("aria-selected", String(on));
     t.tabIndex = on ? 0 : -1;
   });
-  document.querySelectorAll(".panel").forEach(p => { p.hidden = p.dataset.lens !== lens; });
+  caseEl.querySelectorAll(".panel").forEach(p => { p.hidden = p.dataset.lens !== lens; });
 
   if (anchorEl && before !== null) {
     const after = anchorEl.getBoundingClientRect().top;
     if (Math.abs(after - before) > 1) window.scrollBy({ top: after - before, behavior: "instant" });
   }
-  try { localStorage.setItem(LENS_KEY, lens); } catch (e) {}
 }
 
 function init() {
@@ -863,19 +821,11 @@ function init() {
   setTheme(document.documentElement.dataset.theme || "light", false);
   document.getElementById("theme-btn").addEventListener("click", () =>
     setTheme(currentTheme() === "dark" ? "light" : "dark", true));
-  let saved = "design";
-  try { saved = localStorage.getItem(LENS_KEY) || "design"; } catch (e) {}
-  if (!LENSES.some(l => l.id === saved)) saved = "design";
-  setLens(saved);
-
-  document.getElementById("lens-seg").addEventListener("click", e => {
-    const b = e.target.closest("button[data-lens]");
-    if (b) setLens(b.dataset.lens);
-  });
+  document.querySelectorAll(".case").forEach(c => setLens(c, LENSES[0].id));
 
   document.getElementById("cases").addEventListener("click", e => {
     const t = e.target.closest(".tab");
-    if (t) setLens(t.dataset.lens, t);
+    if (t) setLens(t.closest(".case"), t.dataset.lens, t);
   });
 
   // Arrow-key navigation within each tablist
@@ -890,7 +840,7 @@ function init() {
     else if (e.key === "End") i = list.length - 1;
     else return;
     e.preventDefault();
-    setLens(list[i].dataset.lens, list[i]);
+    setLens(t.closest(".case"), list[i].dataset.lens, list[i]);
     list[i].focus();
   });
 }
