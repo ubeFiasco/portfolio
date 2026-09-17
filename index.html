@@ -408,6 +408,13 @@ p { margin: 0; }
   .seg button { padding: 7px 11px 6px; }
 }
 </style>
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("geoff-portfolio-theme"); } catch (e) {}
+    document.documentElement.dataset.theme = (t === "dark" || t === "light") ? t : "light";
+  })();
+</script>
 </head>
 <body data-lens="design">
 
@@ -809,10 +816,8 @@ function renderCase(c) {
    THEME: follows the system until the visitor picks one
    ===================================================================== */
 const THEME_KEY = "geoff-portfolio-theme";
-const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
-
 function currentTheme() {
-  return document.documentElement.dataset.theme || (systemDark.matches ? "dark" : "light");
+  return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
 }
 
 function setTheme(theme, remember) {
@@ -855,15 +860,9 @@ function init() {
   document.getElementById("draft-note").hidden = !SHOW_DRAFT_NOTE;
   document.getElementById("yr").textContent = new Date().getFullYear();
 
-  let savedTheme = null;
-  try { savedTheme = localStorage.getItem(THEME_KEY); } catch (e) {}
-  setTheme(savedTheme === "dark" || savedTheme === "light" ? savedTheme : null, false);
+  setTheme(document.documentElement.dataset.theme || "light", false);
   document.getElementById("theme-btn").addEventListener("click", () =>
     setTheme(currentTheme() === "dark" ? "light" : "dark", true));
-  systemDark.addEventListener("change", () => {
-    if (!document.documentElement.dataset.theme) setTheme(null, false);
-  });
-
   let saved = "design";
   try { saved = localStorage.getItem(LENS_KEY) || "design"; } catch (e) {}
   if (!LENSES.some(l => l.id === saved)) saved = "design";
