@@ -256,7 +256,8 @@ p { margin: 0; }
 .case .tab { font-size: 1.0625rem; }
 .case .fig .v { letter-spacing: -0.02em; font-size: clamp(2rem, 1.2rem + 2.4vw, 3rem); }
 .case .label, .case .tab small, .case .meta dt, .case .case-rail .company, .case .results .learn strong { letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.6875rem; }
-.case { padding-block: clamp(56px, 8vw, 112px); border-top: 1px solid var(--ink); scroll-margin-top: 72px; }
+.case { padding-block: 0 clamp(56px, 8vw, 112px); scroll-margin-top: 72px; }
+.case > .wrap { border-top: 1px solid var(--ink); padding-top: clamp(56px, 8vw, 112px); }
 .case-grid {
   display: grid;
   grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
@@ -354,7 +355,8 @@ p { margin: 0; }
 .results .learn strong { color: var(--ink); font-weight: 500; font-family: var(--f-wide); font-size: var(--step--1); letter-spacing: 0.04em; display: block; margin-bottom: 4px; }
 
 /* ---------- Footer ---------- */
-.foot { border-top: 1px solid var(--ink); padding-block: clamp(48px, 7vw, 96px) 40px; }
+.foot { padding-block: 0 40px; }
+.foot > .wrap { border-top: 1px solid var(--ink); padding-top: clamp(48px, 7vw, 96px); }
 .foot .wrap { display: grid; gap: 28px; }
 .foot .links { display: flex; gap: 24px; flex-wrap: wrap; font-family: var(--f-wide); font-size: var(--step--1); }
 .foot .links a { color: var(--accent-ink); }
