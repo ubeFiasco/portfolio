@@ -100,6 +100,7 @@ body {
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
 .wrap { max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
+.sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 h1, h2, h3, h4 { margin: 0; font-weight: 900; font-family: var(--f-display); line-height: 0.95; text-wrap: balance; }
 p { margin: 0; }
 .label {
@@ -155,41 +156,142 @@ p { margin: 0; }
   :root:not([data-theme="light"]) .theme-btn .moon { display: block; }
   :root:not([data-theme="light"]) .theme-btn .sun { display: none; }
 }
-/* ---------- Hero ---------- */
-.hero { padding-block: clamp(48px, 9vw, 120px) clamp(40px, 6vw, 80px); }
-.hero h1 {
+/* ---------- Hero: full-height first screen ---------- */
+.hero {
+  position: relative;
+  min-height: calc(100svh - 60px);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  align-content: center;
+  padding-block: clamp(32px, 6vw, 88px) 20px;
+  overflow: clip;
+}
+.hero-inner { position: relative; z-index: 1; align-self: center; }
+.hero-eyebrow {
+  font-family: var(--f-med);
+  font-size: var(--step--1);
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: clamp(14px, 2vw, 26px);
+}
+
+/* Every headline sits in the same grid cell, so swapping copy of a
+   different length never moves the layout. */
+.morph { display: grid; }
+.morph .line {
+  grid-area: 1 / 1;
+  visibility: hidden;
   font-family: var(--f-med);
   font-weight: 500;
-  font-size: clamp(2.5rem, 8vw, 6.5rem);
+  font-size: clamp(2.25rem, 7vw, 5.75rem);
   line-height: 1.02;
   letter-spacing: 1px;
-  display: grid;
+  max-width: 17ch;
 }
-.hero h1 span { display: block; animation: rise .9s cubic-bezier(.2,.7,.2,1) both; }
-.hero h1 span:nth-child(2) { animation-delay: .08s; }
-.hero h1 .loop {
-  animation-delay: .16s;
+.morph .line.is-in, .morph .line.is-out { visibility: visible; }
+
+/* Words are frozen at their final width so the line can't reflow while
+   the letters inside are still cycling; the letters themselves stay
+   normal inline text, which keeps the face's kerning once it resolves. */
+.morph .word, .hero-kicker .word { display: inline-block; white-space: nowrap; }
+.morph .c.is-scrambling { color: var(--accent); opacity: 0.62; }
+.morph .line.is-out .c {
+  opacity: 0;
+  transition: opacity 180ms ease;
+  transition-delay: var(--d, 0ms);
+}
+
+.hero-kicker {
+  position: relative;
+  margin-top: clamp(18px, 2.4vw, 32px);
   font-family: var(--f-med);
-  font-weight: 500;
-  font-size: 0.5em;
-  line-height: 1.2;
-  margin-top: 0.5em;
+  font-size: clamp(1.1rem, 2vw, 1.6rem);
   letter-spacing: 1px;
   color: var(--accent-ink);
   display: flex;
   align-items: center;
-  gap: 0.35em;
+  gap: 0.4em;
+  min-height: 1.6em;
 }
-.loop svg { width: 0.9em; height: 0.9em; flex: none; }
+.hero-kicker .c.is-scrambling { color: var(--accent); opacity: 0.62; }
+
+/* The cycle control is the spinning mark beside the kicker. */
+.cycle {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  display: inline-grid;
+  place-items: center;
+  width: 1em;
+  height: 1em;
+  flex: none;
+  border-radius: 50%;
+}
+.cycle svg { width: 0.9em; height: 0.9em; display: block; transition: transform 700ms cubic-bezier(.2,.8,.2,1); }
+.cycle:hover svg { transform: rotate(180deg); }
 @media (prefers-reduced-motion: no-preference) {
-  .loop svg { animation: spin 9s linear infinite; }
+  .cycle:not(:hover) svg { animation: spin 14s linear infinite; }
 }
-@keyframes rise { from { transform: translateY(0.18em); } to { transform: none; } }
 @keyframes spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .hero h1 span { animation: none; } }
+
+/* ---------- Dithered shapes ---------- */
+.hero-shapes {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  display: grid;
+  place-items: center end;
+}
+.hero-shapes svg {
+  width: min(58vw, 560px);
+  height: auto;
+  overflow: visible;
+  transform: translateX(6%);
+}
+.dth { fill: var(--accent); }
+.sh-fill-a { fill: url(#dth-a); }
+.sh-fill-b { fill: url(#dth-b); }
+.sh-fill-c { fill: url(#dth-c); }
+.sh-line { fill: none; stroke: var(--accent); stroke-width: 1.25; opacity: 0.55; }
+@media (max-width: 1100px) {
+  .hero-shapes { place-items: center; }
+  .hero-shapes svg { width: 112vw; transform: none; opacity: 0.22; }
+}
+
+/* ---------- Scroll cue ---------- */
+.scroll-cue {
+  position: relative;
+  z-index: 1;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--f-med);
+  font-size: var(--step--1);
+  letter-spacing: 1px;
+  color: var(--muted);
+  text-decoration: none;
+  padding-block: 12px;
+}
+.scroll-cue:hover { color: var(--ink); }
+.scroll-cue svg { width: 14px; height: 14px; }
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-cue svg { animation: nudge 2.2s ease-in-out infinite; }
+}
+@keyframes nudge { 0%, 100% { transform: none; } 50% { transform: translateY(3px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .morph .line.is-out .c { transition-duration: 1ms; transition-delay: 0ms !important; }
+}
 
 .intro {
-  margin-top: clamp(40px, 6vw, 72px);
+  margin-top: 0;
+  padding-block: clamp(48px, 7vw, 96px) 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(24px, 4vw, 64px);
@@ -409,20 +511,54 @@ p { margin: 0; }
 </header>
 
 <main id="top">
-  <section class="hero wrap" aria-label="Introduction">
-    <h1>
-      <span>Understand the problem.</span>
-      <span>Provide solutions.</span>
-      <span class="loop">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v4.5h-4.5"/></svg>
-        Rinse and repeat.
-      </span>
-    </h1>
+  <section class="hero wrap" id="hero" aria-label="Introduction">
+    <div class="hero-shapes" aria-hidden="true">
+      <svg id="hero-shapes" viewBox="0 0 600 600" fill="none">
+        <defs>
+          <!-- Three dither densities, ordered-dot style, on a fixed grid. -->
+          <pattern id="dth-a" width="7" height="7" patternUnits="userSpaceOnUse">
+            <rect class="dth" width="1.5" height="1.5" x="0" y="0"/>
+          </pattern>
+          <pattern id="dth-b" width="5" height="5" patternUnits="userSpaceOnUse">
+            <rect class="dth" width="1.7" height="1.7" x="0" y="0"/>
+            <rect class="dth" width="1.7" height="1.7" x="2.5" y="2.5"/>
+          </pattern>
+          <pattern id="dth-c" width="5" height="5" patternUnits="userSpaceOnUse">
+            <rect class="dth" width="1.9" height="1.9" x="0" y="0"/>
+            <rect class="dth" width="1.9" height="1.9" x="2.5" y="2.5"/>
+            <rect class="dth" width="1.9" height="1.9" x="2.5" y="0"/>
+          </pattern>
+        </defs>
+        <g id="sh-g">
+          <path id="sh-0" class="sh-fill-a"/>
+          <path id="sh-1" class="sh-fill-c"/>
+          <path id="sh-2" class="sh-fill-b"/>
+          <path id="sh-3" class="sh-line"/>
+        </g>
+      </svg>
+    </div>
 
-    <div class="intro" id="about">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">Product Designer</p>
+      <h1 class="morph" id="morph"></h1>
+      <p class="hero-kicker" id="hero-kicker">
+        <button class="cycle" type="button" id="cycle" aria-label="Next headline">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v4.5h-4.5"/></svg>
+        </button>
+        <span class="kicker-text"></span>
+      </p>
+    </div>
+
+    <a class="scroll-cue" href="#work">
+      Selected work
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v15M6 13.5 12 19.5l6-6"/></svg>
+    </a>
+  </section>
+
+  <section class="wrap" id="about" aria-label="About">
+    <div class="intro">
       <div>
         <h2>What I think about design</h2>
-        <!-- <p>Design begins with the understanding that a person is trying to get something done. It develops by diving into conversations, interactions, and everything a person does to get that thing done. And then asking ourselves, is there value in making that more efficient, more intuitive, and more delightful by noticing and changing behaviors people didn’t even know they were used to.</p> -->
         <p>We're all trying to get stuff done, progress, experience. The way things are designed either help us or hinder us in that journey. And (un)fortunately, we get to trial and error what works best for experiencer. Everything we do is designed by nature, crafted by humans, and experienced by everyone.</p>
       </div>
       <div>
@@ -464,6 +600,21 @@ p { margin: 0; }
    Set SHOW_DRAFT_NOTE to false once the copy is final.
    ===================================================================== */
 const SHOW_DRAFT_NOTE = true;
+
+/* =====================================================================
+   HERO
+   Three headlines the first screen morphs between. Edit the copy here —
+   `line` is the big headline, `kicker` the small line under it.
+   DWELL is how long each one holds before the next.
+   ===================================================================== */
+const HERO = [
+  { line: "A pixel wielding, problem solving guy.", kicker: "Rinse and repeat." },
+  { line: "Designed by nature, crafted by humans.", kicker: "Experienced by everyone." },
+  { line: "Discover, define, and execute.", kicker: "Startup pace, full cycle." }
+];
+const DWELL = 6500;         // ms each headline holds
+const DECODE_STAGGER = 26;  // ms between characters resolving, left to right
+const DECODE_JITTER = 180;  // ms of randomness on each character's resolve
 
 const LENSES = [
   { id: "design",  tab: "For designers", short: "Designer" },
@@ -814,7 +965,249 @@ function setLens(caseEl, lens, anchorEl) {
   }
 }
 
+/* =====================================================================
+   HERO: decoder headline + dithered shapes that morph with it
+   ===================================================================== */
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/\\|=+*<>#%•";
+
+/* --- Headline ------------------------------------------------------- */
+let heroIndex = 0;
+let heroTimer = null;
+let heroPaused = document.hidden;
+/* Each decoding element carries its own run token, so starting the kicker
+   can't cancel the headline still resolving beside it. */
+
+function splitChars(text) {
+  const esc = ch => ch === "&" ? "&amp;" : ch === "<" ? "&lt;" : ch;
+  return text.split(" ").map(word =>
+    `<span class="word">` +
+    [...word].map(ch => `<span class="c" data-ch="${esc(ch)}">${esc(ch)}</span>`).join("") +
+    `</span>`
+  ).join(" ");
+}
+
+/* Pin every word to the width it has RIGHT NOW — called with the resolved
+   text on screen, so the measurement always matches the current layout.
+   Released again once the line has finished decoding, which hands kerning
+   back to the font. */
+function lockWidths(root) {
+  [...root.querySelectorAll(".word")].forEach(w => {
+    w.style.width = w.getBoundingClientRect().width.toFixed(2) + "px";
+  });
+}
+function unlockWidths(root) {
+  root.querySelectorAll(".word").forEach(w => { w.style.width = ""; });
+}
+
+function buildHeadlines() {
+  const morph = document.getElementById("morph");
+  morph.innerHTML = HERO.map((h, i) =>
+    `<span class="line" data-i="${i}">${splitChars(h.line)}</span>`
+  ).join("");
+}
+
+/* Resolves each cell left to right; until a cell resolves it shows a
+   random glyph, which is what reads as the decoder. */
+function decode(root, done) {
+  const cells = [...root.querySelectorAll(".c")];
+  const run = (root._run = (root._run || 0) + 1);
+  lockWidths(root);
+
+  if (reduceMotion.matches) {
+    unlockWidths(root);
+    cells.forEach(c => { c.textContent = c.dataset.ch; c.classList.remove("is-scrambling"); });
+    if (done) done();
+    return;
+  }
+
+  const start = performance.now();
+  cells.forEach((c, i) => {
+    c._at = i * DECODE_STAGGER + Math.random() * DECODE_JITTER;
+    c.classList.add("is-scrambling");
+  });
+  const last = Math.max(...cells.map(c => c._at));
+
+  (function tick(now) {
+    if (run !== root._run) return;
+    const t = now - start;
+    cells.forEach(c => {
+      const target = c.dataset.ch;
+      if (t >= c._at) {
+        if (c.classList.contains("is-scrambling")) {
+          c.textContent = target;
+          c.classList.remove("is-scrambling");
+        }
+      } else if (target.trim()) {
+        c.textContent = GLYPHS[(Math.random() * GLYPHS.length) | 0];
+      }
+    });
+    // rAF is frozen in a background tab, which would strand the line
+    // mid-scramble; fall back to a timer so it always resolves.
+    if (t < last + 60) {
+      if (document.hidden) setTimeout(() => tick(performance.now()), 50);
+      else requestAnimationFrame(tick);
+    } else {
+      unlockWidths(root);
+      if (done) done();
+    }
+  })(start);
+}
+
+function showHeadline(next) {
+  const lines = [...document.querySelectorAll(".morph .line")];
+  const kicker = document.getElementById("hero-kicker");
+  const out = lines[heroIndex];
+  const into = lines[next];
+  if (into === out && into.classList.contains("is-in")) return;
+
+  if (out && out !== into) {
+    const cells = [...out.querySelectorAll(".c")];
+    out.classList.remove("is-in");
+    out.classList.add("is-out");
+    cells.forEach((c, i) => c.style.setProperty("--d", i * 6 + "ms"));
+    setTimeout(() => {
+      out.classList.remove("is-out");
+      cells.forEach(c => { c.style.removeProperty("--d"); c.textContent = c.dataset.ch; });
+    }, reduceMotion.matches ? 1 : 180 + cells.length * 6);
+  }
+
+  into.classList.remove("is-out");
+  into.classList.add("is-in");
+  decode(into);
+
+  const kickerText = kicker.querySelector(".kicker-text");
+  kickerText.innerHTML = splitChars(HERO[next].kicker);
+  decode(kickerText);
+
+  heroIndex = next;
+  morphShapes(next);
+}
+
+function heroPlay() {
+  clearInterval(heroTimer);
+  if (reduceMotion.matches) return;
+  heroTimer = setInterval(() => {
+    if (!heroPaused) showHeadline((heroIndex + 1) % HERO.length);
+  }, DWELL);
+}
+
+/* --- Shapes --------------------------------------------------------- */
+/* Each layer is a closed blob of POINTS control points. Morphing is a
+   straight lerp of the radius offsets, so every state has the same path
+   structure and the shapes read as one thing changing, not a crossfade.
+   Between swaps they keep undulating on their own. */
+const POINTS = 8;
+const LAYERS = [
+  { el: "sh-0", cx: 300, cy: 290, r: 215, wob: 0.26, drift: 0.05 },
+  { el: "sh-1", cx: 296, cy: 300, r: 148, wob: 0.34, drift: -0.08 },
+  { el: "sh-2", cx: 316, cy: 282, r:  86, wob: 0.40, drift: 0.11 },
+  { el: "sh-3", cx: 300, cy: 296, r: 236, wob: 0.20, drift: -0.04 }
+];
+
+// Deterministic per (layer, state) so the shapes are the same every load.
+function amps(layer, state) {
+  let seed = (layer * 9176 + state * 613 + 17) >>> 0;
+  const rand = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
+  return Array.from({ length: POINTS }, () => (rand() * 2 - 1));
+}
+
+const SHAPE_STATES = LAYERS.map((_, li) => HERO.map((_, si) => amps(li, si)));
+
+function blobPath(cx, cy, r, offs, wob, rot) {
+  const pts = offs.map((o, i) => {
+    const a = rot + (i / POINTS) * Math.PI * 2;
+    const rr = r * (1 + o * wob);
+    return [cx + Math.cos(a) * rr, cy + Math.sin(a) * rr];
+  });
+  const n = pts.length;
+  let d = `M${pts[0][0].toFixed(2)},${pts[0][1].toFixed(2)}`;
+  for (let i = 0; i < n; i++) {
+    const p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += `C${c1[0].toFixed(2)},${c1[1].toFixed(2)} ${c2[0].toFixed(2)},${c2[1].toFixed(2)} ${p2[0].toFixed(2)},${p2[1].toFixed(2)}`;
+  }
+  return d + "Z";
+}
+
+let shapeFrom = 0, shapeTo = 0, shapeStart = -1e9;
+const MORPH_MS = 1500;
+
+function morphShapes(next) {
+  shapeFrom = shapeTo;
+  shapeTo = next;
+  shapeStart = performance.now();
+  if (reduceMotion.matches) drawShapes(performance.now());
+}
+
+// Overshoots, so the swap lands with a snap instead of easing flat.
+function easeBack(x) {
+  const c1 = 1.70158, c3 = c1 + 1;
+  return 1 + c3 * (x - 1) ** 3 + c1 * (x - 1) ** 2;
+}
+
+function drawShapes(now) {
+  const still = reduceMotion.matches;
+  const raw = Math.min(1, (now - shapeStart) / MORPH_MS);
+  const t = still ? 1 : easeBack(raw);
+  // Loudest in the middle of a swap, zero when settled.
+  const kick = still ? 0 : Math.sin(Math.min(raw, 1) * Math.PI);
+
+  LAYERS.forEach((L, li) => {
+    const a = SHAPE_STATES[li][shapeFrom], b = SHAPE_STATES[li][shapeTo];
+    // Idle undulation: every control point breathes on its own slow phase.
+    const idle = still ? 0 : 0.16;
+    const offs = a.map((v, i) => {
+      const lerped = v + (b[i] - v) * t;
+      const wave = Math.sin(now / 2400 + i * 0.9 + li * 1.6) * idle
+                 + Math.sin(now / 5200 + i * 2.1 - li) * idle * 0.6;
+      return lerped + wave + kick * Math.sin(i * 2.3 + li * 1.1) * 0.5;
+    });
+    const rot = L.drift * (still ? 0 : now / 5000)
+              + (shapeFrom + (shapeTo - shapeFrom) * t) * 1.1
+              + kick * L.drift * 6;
+    document.getElementById(L.el).setAttribute("d", blobPath(L.cx, L.cy, L.r, offs, L.wob, rot));
+  });
+
+  // Whole-cluster surge during the swap.
+  const g = document.getElementById("sh-g");
+  if (g) {
+    const s = 1 + kick * 0.09;
+    g.setAttribute("transform", `translate(300 292) rotate(${(kick * 7).toFixed(2)}) scale(${s.toFixed(4)}) translate(-300 -292)`);
+  }
+
+  if (!still) requestAnimationFrame(drawShapes);
+}
+
+function initHero() {
+  buildHeadlines();
+  const hero = document.getElementById("hero");
+
+  document.querySelector(".cycle").addEventListener("click", () => {
+    showHeadline((heroIndex + 1) % HERO.length);
+    heroPlay();
+  });
+
+  // Hold while the copy is being read, or while the tab is in the background.
+  const pause = on => { heroPaused = on; };
+  const copy = document.querySelector(".hero-inner");
+  copy.addEventListener("pointerenter", () => pause(true));
+  copy.addEventListener("pointerleave", () => pause(false));
+  copy.addEventListener("focusin", () => pause(true));
+  copy.addEventListener("focusout", () => pause(false));
+  document.addEventListener("visibilitychange", () => pause(document.hidden));
+
+  showHeadline(0);
+  heroPlay();
+  // Draw once straight away — rAF never fires in a background tab, and the
+  // shapes should already be there when the tab is first looked at.
+  drawShapes(performance.now());
+  reduceMotion.addEventListener("change", () => { heroPlay(); drawShapes(performance.now()); });
+}
+
 function init() {
+  initHero();
   renderIndex();
   document.getElementById("cases").innerHTML = CASES.map(renderCase).join("");
   document.getElementById("draft-note").hidden = !SHOW_DRAFT_NOTE;
